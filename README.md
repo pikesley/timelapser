@@ -50,7 +50,7 @@ At the top of the [`Makefile`](Makefile), set `PI` to the name of your Pi, e.g. 
 make push-code
 ```
 
-## Install code and aim the camera
+## Install dependencies and aim the camera
 
 Back on the Pi, run
 
