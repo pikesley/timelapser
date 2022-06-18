@@ -5,6 +5,9 @@ PHOTOS_PER_MINUTE=4
 PI=lapsecam.local
 BWLIMIT=1000
 
+# default to formatting amd linting
+default: format lint freeze
+
 build:
 	docker build \
 		--build-arg PROJECT=${PROJECT} \
@@ -33,6 +36,9 @@ black:
 
 isort:
 	python -m isort .
+
+lint:
+	python -m pylama
 
 freeze:
 	python -m pip freeze > requirements.txt
@@ -69,7 +75,7 @@ python-installs:
 	python -m pip install -r requirements-pi.txt
 
 cron:
-	sudo python scripts/build-cron.py ${PHOTOS_PER_MINUTE}
+	sudo python scripts/build_cron.py ${PHOTOS_PER_MINUTE}
 
 aim:
 	@curl https://raw.githubusercontent.com/RuiSantosdotme/Random-Nerd-Tutorials/master/Projects/rpi_camera_surveillance_system.py -o /tmp/aimcam.py
