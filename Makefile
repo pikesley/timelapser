@@ -51,6 +51,8 @@ movie:
 
 ### pi only
 
+setup: install aim
+
 install: apt-installs python-installs
 
 apt-installs:
@@ -73,7 +75,7 @@ aim:
 	@echo
 	@echo "    http://$(shell hostname).local:8000"
 	@echo
-	@echo "to aim your camera"
+	@echo "to aim your camera (ctrl-C to stop)"
 	@echo
 	@python /tmp/aimcam.py
 
