@@ -70,15 +70,25 @@ Once that's all configured, there's a `make` target that creates the cronjobs an
 make cron
 ```
 
-By default, this takes 4 photos per minute, one every 15 seconds, but this is configurable. For example:
+By default, this takes 4 photos per minute, one every 15 seconds, but this is configurable simply by editing `conf/photos-per-minute`. For example, setting this to `7` will take one photo every 8-ish seconds. Attempting to take too many photos per minute will cause things to break, so be sensible.
+
+## Pause and unpause
+
+There are two handy `make` targets:
 
 ```
-make cron PHOTOS_PER_MINUTE=7
+make pause
 ```
 
-will take one photo every 8-ish seconds. Attempting to take too many photos per minute will cause things to break, so be sensible.
+which pauses the camera (by deleting all the cronjobs), and
 
-### Cleanup
+```
+make unpause
+```
+
+which reinstates the cronjobs and restarts the photography.
+
+## Cleanup
 
 Running
 

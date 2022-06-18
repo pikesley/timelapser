@@ -1,7 +1,6 @@
-import sys
 from pathlib import Path
 
-photos_per_minute = int(sys.argv[1])
+photos_per_minute = int(Path("conf/photos-per-minute").read_text(encoding="UTF-8"))
 
 DELAY = 0
 lines = []
