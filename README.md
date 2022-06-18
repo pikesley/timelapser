@@ -1,5 +1,7 @@
 # Time-lapser
 
+_Make timelapse movies with a camera-equipped Raspberry Pi_
+
 ## Configure your Camera-Pi
 
 From a box-fresh install of [Raspberry Pi OS Bullseye](https://www.raspberrypi.com/news/raspberry-pi-os-debian-bullseye/) (no desktop):
@@ -13,12 +15,14 @@ sudo raspi-config nonint do_hostname lapsecam
 ### Enable the camera
 
 ```
-echo "" | sudo tee -a /boot/config.txt
-echo "# raspi-config is a confusing mess" | sudo tee -a /boot/config.txt
-echo "[all]" | sudo tee -a /boot/config.txt
-echo "gpu_mem=128" | sudo tee -a /boot/config.txt
-echo "start_x=1" | sudo tee -a /boot/config.txt
-echo "camera_auto_detect=0" | sudo tee -a /boot/config.txt
+cat <<EOF | sudo tee -a /boot/config.txt
+
+# raspi-config is a confusing mess
+[all]
+gpu_mem=128
+start_x=1
+camera_auto_detect=0
+EOF
 ```
 
 > This is slighty heavy-handed and non-idempotent, but it appears to be [what `raspi-config` is doing behind the scenes](https://raspberrypi.stackexchange.com/questions/14229/how-can-i-enable-the-camera-without-using-raspi-config)
@@ -46,19 +50,21 @@ At the top of the [`Makefile`](Makefile), set `PI` to the name of your Pi, e.g. 
 make push-code
 ```
 
-## Aim the camera
+## Install code and aim the camera
 
 Back on the Pi, run
 
 ```
-make aim
+make setup
 ```
 
-There should now be streaming video at [https://lapsecam.local:8000/](https://lapsecam.local:8000/), so you can aim and focus your camera.
+This installs everything, then starts a webserver so that there should be streaming video at [https://lapsecam.local:8000/](https://lapsecam.local:8000/), allowing you to aim and focus your camera.
+
+> It pulls the sreaming server from [here](https://github.com/RuiSantosdotme/Random-Nerd-Tutorials/blob/master/Projects/rpi_camera_surveillance_system.py) - this code has no license that I could find, so I'm not directly including it here
 
 ## Setup the cronjobs
 
-There's a `make` target that creates the cronjobs:
+Once that's all configured, there's a `make` target that creates the cronjobs and starts taking photos:
 
 ```
 make cron
@@ -72,6 +78,16 @@ make cron PHOTOS_PER_MINUTE=7
 
 will take one photo every 8-ish seconds. Attempting to take too many photos per minute will cause things to break, so be sensible.
 
+### Cleanup
+
+Running
+
+```
+make clean
+```
+
+will delete _all_ of the photos on the Pi.
+
 ## Pull the photos locally
 
 On the container:
@@ -80,7 +96,7 @@ On the container:
 make pull-photos
 ```
 
-This pulls the photos from thr Pi into `/opt/stills` (where `${STILLS}` is mounted). The `rsync` is running with bandwidth-limiting enabled, because letting it run full-tilt seems to overwhelm the Pi, which overheats and shuts down. The amount of limiting is configurable as `BWLIMIT` at the top of the `Makefile`.
+This pulls the photos from the Pi into `/opt/stills` (where `${STILLS}` is mounted). The `rsync` is running with bandwidth-limiting enabled, because letting it run full-tilt seems to overwhelm the Pi, which overheats and shuts down. The amount of limiting is configurable as `BWLIMIT` at the top of the `Makefile`.
 
 ## Make a movie
 
