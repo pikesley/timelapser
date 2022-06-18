@@ -34,6 +34,9 @@ black:
 isort:
 	python -m isort .
 
+freeze:
+	python -m pip freeze > requirements.txt
+
 push-code:
 	rsync --archive \
 		  --verbose \
