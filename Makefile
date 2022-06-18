@@ -1,19 +1,51 @@
 PROJECT = $(shell basename $(shell pwd))
 ME=$(shell git config --global user.name)
 ID = ${ME}/${PROJECT}
-PHOTOS_PER_MINUTE=4
 PI=lapsecam.local
 BWLIMIT=1000
 
-# default to formatting amd linting
-default: format lint freeze
+### container only
 
-build:
+# default to formatting amd linting
+default: format lint freeze  ## (container only) `format`, `lint`, `freeze`
+
+format: black isort  ## (container only) run the formatters
+
+black:
+	python -m black .
+
+isort:
+	python -m isort .
+
+lint:  ## (container only) run the linters
+	python -m pylama
+
+freeze:  ## (container only) freeze the pip versions
+	python -m pip freeze > requirements.txt
+
+push-code:  ## (container only) push code to the pi
+	rsync --archive \
+		  --verbose \
+		  --delete \
+		  --exclude .git \
+		  --exclude movies \
+		  . \
+		  pi@${PI}:${PROJECT}
+
+pull-photos:  ## (container only) rsync the photos off the pi
+	rsync -av --bwlimit=${BWLIMIT} pi@${PI}:photos/ /opt/stills
+
+movie:  ## (container only) make a movie
+	bash /opt/${PROJECT}/scripts/make-movie.sh
+
+### laptop only
+
+build:  ## (laptop only) build the container
 	docker build \
 		--build-arg PROJECT=${PROJECT} \
 		--tag ${ID} .
 
-run: guard-STILLS
+run: guard-STILLS  ## (laptop only) run the container
 	docker run \
 		--name ${PROJECT} \
 		--hostname ${PROJECT} \
@@ -27,42 +59,11 @@ run: guard-STILLS
 		${ID} \
 		bash
 
-### container only
-
-format: black isort
-
-black:
-	python -m black .
-
-isort:
-	python -m isort .
-
-lint:
-	python -m pylama
-
-freeze:
-	python -m pip freeze > requirements.txt
-
-push-code:
-	rsync --archive \
-		  --verbose \
-		  --delete \
-		  --exclude .git \
-		  --exclude movies \
-		  . \
-		  pi@${PI}:${PROJECT}
-
-pull-photos:
-	rsync -av --bwlimit=${BWLIMIT} pi@${PI}:photos/ /opt/stills
-
-movie:
-	bash /opt/${PROJECT}/scripts/make-movie.sh
-
 ### pi only
 
-setup: install aim
+setup: install aim  ## (pi only) install dependencies and aim the camera
 
-install: apt-installs python-installs
+install: apt-installs python-installs  ## (pi only) install the dependencies
 
 apt-installs:
 	sudo apt-get update
@@ -74,10 +75,15 @@ apt-installs:
 python-installs:
 	python -m pip install -r requirements-pi.txt
 
-cron:
-	sudo python scripts/build_cron.py ${PHOTOS_PER_MINUTE}
+cron:  ## (pi only) setup the cronjobs
+	sudo python scripts/build_cron.py
 
-aim:
+pause:  ## (pi only) pause photography
+	sudo rm /etc/cron.d/${PROJECT}
+
+unpause: cron  ## (pi only) restart photography
+
+aim:  ## (pi only) stream video from the camera
 	@curl https://raw.githubusercontent.com/RuiSantosdotme/Random-Nerd-Tutorials/master/Projects/rpi_camera_surveillance_system.py -o /tmp/aimcam.py
 	@echo
 	@echo "Go to"
@@ -88,7 +94,7 @@ aim:
 	@echo
 	@python /tmp/aimcam.py
 
-clean:
+clean:  ## (pi only) delete all the photos
 	rm -fr /home/pi/photos/
 
 ### generic
@@ -99,3 +105,7 @@ guard-%:
 			echo "You must provide the ${*} variable" ; \
 			exit 1 ; \
 	fi
+
+# absolute voodoo from @rgarner
+help:  ## show this help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
