@@ -62,9 +62,9 @@ make setup
 
 This installs everything, then starts a webserver so that there should be streaming video at [https://lapsecam.local:8000/](https://lapsecam.local:8000/), allowing you to aim and focus your camera.
 
-> It pulls the sreaming server from [here](https://github.com/RuiSantosdotme/Random-Nerd-Tutorials/blob/master/Projects/rpi_camera_surveillance_system.py) - this code has no license that I could find, so I'm not directly including it here
+> It pulls the sreaming server from [here](https://github.com/RuiSantosdotme/Random-Nerd-Tutorials/blob/master/Projects/rpi_camera_surveillance_system.py) - this code has no license that I could find, so I'm not directly including it
 
-## Setup the cronjobs
+## Set-up the cronjobs
 
 Once that's all configured, there's a `make` target that creates the cronjobs and starts taking photos:
 
