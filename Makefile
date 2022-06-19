@@ -1,7 +1,12 @@
+ME = $(shell git config --global user.name)
+ifeq ($(ME),)  # this will resolve to empty-string in CI
+	ME := fakeperson
+endif
+
 PROJECT = $(shell basename $(shell pwd))
-# ME = $(shell git config --global user.name)
-ME = pikesley
+
 ID = ${ME}/${PROJECT}
+
 PI = lapsecam.local
 BWLIMIT ?= 1000
 
