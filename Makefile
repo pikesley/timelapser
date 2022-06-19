@@ -7,7 +7,7 @@ BWLIMIT=1000
 ### container only
 
 # default to formatting amd linting
-default: format lint freeze  ## (container only) `format`, `lint`, `freeze`
+default: format lint test cleanup freeze  ## (container only) `format`, `lint`, `test`, `cleanup`, `freeze`
 
 format: black isort  ## (container only) run the formatters
 
@@ -19,6 +19,19 @@ isort:
 
 lint:  ## (container only) run the linters
 	python -m pylama
+
+test:  ## (container only) run the tests
+	PYTHONDONTWRITEBYTECODE=1 \
+		python -m pytest \
+		--random-order \
+		--verbose \
+		--capture no \
+		--failed-first \
+		--exitfirst
+
+cleanup:  ## (container only) clean out cache cruft
+	@rm -fr $$(find . -name __pycache__)
+	@rm -fr $$(find . -name .pytest_cache)
 
 freeze:  ## (container only) freeze the pip versions
 	python -m pip freeze > requirements.txt
