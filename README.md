@@ -108,7 +108,11 @@ On the container:
 make pull-photos
 ```
 
-This pulls the photos from the Pi into `/opt/stills` (where `${STILLS}` is mounted). The `rsync` is running with bandwidth-limiting enabled, because letting it run full-tilt seems to overwhelm the Pi, which overheats and shuts down. The amount of limiting is configurable as `BWLIMIT` at the top of the `Makefile`.
+This pulls the photos from the Pi into `/opt/stills` (where `${STILLS}` is mounted). The `rsync` is running with bandwidth-limiting enabled, because letting it run full-tilt seems to overwhelm the Pi, which overheats and shuts down. The amount of limiting is configurable as `BWLIMIT` (in KB/second), so for example to run it unlimited, do
+
+```
+BWLIMIT=0 make pull-photos
+```
 
 ## Make a movie
 

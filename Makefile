@@ -3,7 +3,7 @@ PROJECT = $(shell basename $(shell pwd))
 ME = pikesley
 ID = ${ME}/${PROJECT}
 PI = lapsecam.local
-BWLIMIT = 1000
+BWLIMIT ?= 1000
 
 ### container only
 
