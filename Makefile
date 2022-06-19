@@ -72,6 +72,15 @@ run: guard-STILLS  ## (laptop only) run the container
 		${ID} \
 		bash
 
+ci:
+	docker run \
+		--name ${PROJECT} \
+		--hostname ${PROJECT} \
+		--env PROJECT=${PROJECT} \
+		--rm \
+		${ID} \
+		test
+
 ### pi only
 
 setup: install aim  ## (pi only) install dependencies and aim the camera
