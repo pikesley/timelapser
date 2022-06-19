@@ -1,8 +1,9 @@
 PROJECT = $(shell basename $(shell pwd))
-ME=$(shell git config --global user.name)
+# ME = $(shell git config --global user.name)
+ME = pikesley
 ID = ${ME}/${PROJECT}
-PI=lapsecam.local
-BWLIMIT=1000
+PI = lapsecam.local
+BWLIMIT = 1000
 
 ### container only
 
