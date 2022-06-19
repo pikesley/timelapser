@@ -52,7 +52,14 @@ push-code:  ## (container only) push code to the pi
 		  pi@${PI}:${PROJECT}
 
 pull-photos:  ## (container only) rsync the photos off the pi
-	rsync -av --bwlimit=${BWLIMIT} pi@${PI}:photos/ /opt/stills
+# https://serverfault.com/a/98750
+	while ! rsync --archive \
+				  --verbose \
+				  --bwlimit=${BWLIMIT} \
+				  pi@lapsecam.local:photos/ /opt/stills/ ; do \
+				  	sleep 5 ; \
+				  done
+
 
 movie:  ## (container only) make a movie
 	bash /opt/${PROJECT}/scripts/make-movie.sh
