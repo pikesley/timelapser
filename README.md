@@ -46,7 +46,13 @@ where `STILLS` is the location where you'd like to store the timelapse photos.
 
 ### Push code to the Pi
 
-At the top of the [`Makefile`](Makefile), set `PI` to the name of your Pi, e.g. `PI=lapsecam.local`, then
+At the top of the [`Makefile`](Makefile), set `PI` to the name of your Pi, e.g. `PI=lapsecam.local`, then copy your `ssh` key over:
+
+```
+make send-key
+```
+
+and push the code:
 
 ```
 make push-code
@@ -88,14 +94,14 @@ which pauses the camera (by deleting all the cronjobs), and
 make unpause
 ```
 
-which reinstates the cronjobs and restarts the photography.
+which reinstates the cronjobs and restarts the photography (at the top of the next minute).
 
 ## Cleanup
 
 Running
 
 ```
-make clean
+make delete
 ```
 
 will delete _all_ of the photos on the Pi.
