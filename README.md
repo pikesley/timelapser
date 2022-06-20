@@ -72,7 +72,7 @@ Once that's all configured, there's a `make` target that creates the cronjobs an
 make cron
 ```
 
-By default, this takes 4 photos per minute, one every 15 seconds, but this is configurable simply by editing `conf/photos-per-minute`. For example, setting this to `7` will take one photo every 8-ish seconds. Attempting to take too many photos per minute will cause things to break, so be sensible.
+By default, this takes 6 photos per minute, one every 10 seconds, but this is configurable simply by editing `conf/photos-per-minute`. For example, setting this to `7` will take one photo every 8-ish seconds. Attempting to take too many photos per minute will cause things to break, so be sensible.
 
 ## Pause and unpause
 
