@@ -1,29 +1,30 @@
 import sys
 from datetime import datetime
-from pathlib import Path
 from time import sleep
 
 from picamera import PiCamera  # pylint: disable=E0401
 
-PHOTOS_DIR = "/home/pi/photos"
+RESOLUTION = (3280, 2464)
+ISO = 400
+WARM_UP_TIME = 2
+PHOTOS_DIR = "/home/pi/photos"  # this is created by `make setup`
 
-Path(PHOTOS_DIR).mkdir(exist_ok=True)
 
-DELAY = 0
-if len(sys.argv) > 1:
-    DELAY = int(sys.argv[1])
+def take_photo(delay):
+    """Take a photo after a delay."""
+    sleep(delay)
+    timestamp = datetime.now().isoformat()
 
-sleep(DELAY)
+    camera = PiCamera()
+    camera.resolution = RESOLUTION
+    camera.iso = ISO
 
-timestamp = datetime.now().isoformat()
+    camera.start_preview()
+    sleep(WARM_UP_TIME)
+    camera.capture(f"{PHOTOS_DIR}/{timestamp}.jpg")
+    camera.stop_preview()
+    camera.close()
 
-camera = PiCamera()
 
-camera.resolution = (3280, 2464)
-camera.iso = 400
-
-camera.start_preview()
-sleep(5)
-camera.capture(f"{PHOTOS_DIR}/{timestamp}.jpg")
-camera.stop_preview()
-camera.close()
+if __name__ == "__main__":
+    take_photo(int(sys.argv[1]))
