@@ -71,7 +71,7 @@ movie: docker-only  ## (container only) make a movie
 
 ### laptop only
 
-build: laptop-only  ## (laptop only) build the container
+build:  ## (laptop only) build the container
 	docker build \
 		--build-arg PROJECT=${PROJECT} \
 		--tag ${ID} .
@@ -138,7 +138,7 @@ watch: pi-only  ## (pi only) watch the photos directory
 
 ### ci only
 
-ci:
+ci: build
 	docker run \
 		--name ${PROJECT} \
 		--hostname ${PROJECT} \
