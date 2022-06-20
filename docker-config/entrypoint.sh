@@ -14,7 +14,7 @@ help)
     ;;
 
 test)
-    make
+    make all
     ;;
 
 *)
