@@ -9,13 +9,15 @@ ID = ${ME}/${PROJECT}
 
 PI = lapsecam.local
 BWLIMIT ?= 1000
+PHOTOS_DIR = /home/pi/photos
+
+default: help
 
 ### container only
 
-# default to formatting amd linting
-default: format lint test cleanup freeze  ## (container only) `format`, `lint`, `test`, `cleanup`, `freeze`
+all: docker-only format lint test clean freeze  ## (container only) `format`, `lint`, `test`, `clean`, `freeze`
 
-format: black isort  ## (container only) run the formatters
+format: docker-only black isort  ## (container only) run the formatters
 
 black:
 	python -m black .
@@ -23,10 +25,10 @@ black:
 isort:
 	python -m isort .
 
-lint:  ## (container only) run the linters
+lint: docker-only  ## (container only) run the linters
 	python -m pylama
 
-test:  ## (container only) run the tests
+test: docker-only  ## (container only) run the tests
 	PYTHONDONTWRITEBYTECODE=1 \
 		python -m pytest \
 		--random-order \
@@ -35,14 +37,17 @@ test:  ## (container only) run the tests
 		--failed-first \
 		--exitfirst
 
-cleanup:  ## (container only) clean out cache cruft
+clean: docker-only  ## (container only) clean out cache cruft
 	@rm -fr $$(find . -name __pycache__)
 	@rm -fr $$(find . -name .pytest_cache)
 
-freeze:  ## (container only) freeze the pip versions
+freeze: docker-only  ## (container only) freeze the pip versions
 	python -m pip freeze > requirements.txt
 
-push-code:  ## (container only) push code to the pi
+send-key: docker-only
+	ssh-copy-id -i /root/.ssh/id_rsa.pub pi@${PI}
+
+push-code: docker-only  ## (container only) push code to the pi
 	rsync --archive \
 		  --verbose \
 		  --delete \
@@ -51,7 +56,7 @@ push-code:  ## (container only) push code to the pi
 		  . \
 		  pi@${PI}:${PROJECT}
 
-pull-photos:  ## (container only) rsync the photos off the pi
+pull-photos: docker-only  ## (container only) rsync the photos off the pi
 # https://serverfault.com/a/98750
 	while ! rsync --archive \
 				  --verbose \
@@ -61,17 +66,17 @@ pull-photos:  ## (container only) rsync the photos off the pi
 				  done
 
 
-movie:  ## (container only) make a movie
+movie: docker-only  ## (container only) make a movie
 	bash /opt/${PROJECT}/scripts/make-movie.sh
 
 ### laptop only
 
-build:  ## (laptop only) build the container
+build: laptop-only  ## (laptop only) build the container
 	docker build \
 		--build-arg PROJECT=${PROJECT} \
 		--tag ${ID} .
 
-run: guard-STILLS  ## (laptop only) run the container
+run: laptop-only guard-STILLS  ## (laptop only) run the container
 	docker run \
 		--name ${PROJECT} \
 		--hostname ${PROJECT} \
@@ -85,40 +90,36 @@ run: guard-STILLS  ## (laptop only) run the container
 		${ID} \
 		bash
 
-ci:
-	docker run \
-		--name ${PROJECT} \
-		--hostname ${PROJECT} \
-		--env PROJECT=${PROJECT} \
-		--rm \
-		${ID} \
-		test
 
 ### pi only
 
-setup: install aim  ## (pi only) install dependencies and aim the camera
+setup: pi-only install make-photo-dir aim  ## (pi only) install dependencies and aim the camera
 
-install: apt-installs python-installs  ## (pi only) install the dependencies
+install: pi-only apt-installs python-installs  ## (pi only) install the dependencies
 
-apt-installs:
+apt-installs: pi-only
 	sudo apt-get update
 	sudo apt-get install \
 		--no-install-recommends \
 		--yes \
-		python3-pip
+		python3-pip \
+		git
 
-python-installs:
+python-installs: pi-only
 	python -m pip install -r requirements-pi.txt
 
-cron:  ## (pi only) setup the cronjobs
+make-photo-dir: pi-only
+	mkdir -p ${PHOTOS_DIR}/
+
+cron: pi-only  ## (pi only) setup the cronjobs
 	sudo python scripts/build_cron.py
 
-pause:  ## (pi only) pause photography
+pause: pi-only  ## (pi only) pause photography
 	sudo rm /etc/cron.d/${PROJECT}
 
-unpause: cron  ## (pi only) restart photography
+unpause: pi-only cron  ## (pi only) restart photography
 
-aim:  ## (pi only) stream video from the camera
+aim: pi-only  ## (pi only) stream video from the camera
 	@curl https://raw.githubusercontent.com/RuiSantosdotme/Random-Nerd-Tutorials/master/Projects/rpi_camera_surveillance_system.py -o /tmp/aimcam.py
 	@echo
 	@echo "Go to"
@@ -129,8 +130,22 @@ aim:  ## (pi only) stream video from the camera
 	@echo
 	@python /tmp/aimcam.py
 
-clean:  ## (pi only) delete all the photos
-	rm -fr /home/pi/photos/
+delete: pi-only  ## (pi only) delete all the photos
+	rm -fr ${PHOTOS_DIR}/*
+
+watch: pi-only  ## (pi only) watch the photos directory
+	watch "ls -1 ${PHOTOS_DIR}/ | tail -10"
+
+### ci only
+
+ci:
+	docker run \
+		--name ${PROJECT} \
+		--hostname ${PROJECT} \
+		--env PROJECT=${PROJECT} \
+		--rm \
+		${ID} \
+		test
 
 ### generic
 
@@ -144,3 +159,26 @@ guard-%:
 # absolute voodoo from @rgarner
 help:  ## show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+# guardrails
+
+docker-only:
+	@if ! [ "$(shell uname -a | grep '64 GNU/Linux')" ] ;\
+	then \
+			echo "This target can only be run inside the container" ;\
+			exit 1 ;\
+	fi
+
+laptop-only:
+	@if ! [ "$(shell uname -a | grep 'Darwin')" ] ;\
+	then \
+			echo "This target can only be run on the laptop" ;\
+			exit 1 ;\
+	fi
+
+pi-only:
+	@if ! [ "$(shell uname -a | grep 'armv.* GNU/Linux')" ] ;\
+	then \
+			echo "This target can only be run on the Pi" ;\
+			exit 1 ;\
+	fi
