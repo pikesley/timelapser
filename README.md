@@ -143,7 +143,7 @@ which may or may not be good, `ffmpeg` is voodoo.
 To incrementally pull the pictures as they're created, try something like
 
 ```
-while [ 1 ] ; do make pull-photos ; sleep 60 ; done
+while [ 1 ] ; do make pull-photos ; sleep 2 ; done
 ```
 
 This will (in theory) eventually catch up.
