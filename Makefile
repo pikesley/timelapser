@@ -13,6 +13,11 @@ ifneq ($(IS_PI),)
 	include make/Makefile.pi
 endif
 
+build:  ## build the container
+	docker build \
+		--build-arg PROJECT=${PROJECT} \
+		--tag ${ID} .
+
 ci: build
 	docker run \
 		--name ${PROJECT} \
