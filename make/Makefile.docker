@@ -1,0 +1,55 @@
+include make/Makefile.common
+
+all: format lint test clean freeze  ## `format`, `lint`, `test`, `clean`, `freeze` (default)
+
+format: black isort  ## run the formatters
+
+black:
+	python -m black .
+
+isort:
+	python -m isort .
+
+lint:  ## run the linters
+	python -m pylama
+
+test:  ## run the tests
+	PYTHONDONTWRITEBYTECODE=1 \
+		python -m pytest \
+		--random-order \
+		--verbose \
+		--capture no \
+		--failed-first \
+		--exitfirst
+
+clean:  ## clean out cache cruft
+	@rm -fr $$(find . -name __pycache__)
+	@rm -fr $$(find . -name .pytest_cache)
+
+freeze:  ## freeze the pip versions
+	python -m pip freeze > requirements.txt
+
+send-key: docker-only
+	ssh-copy-id -i /root/.ssh/id_rsa.pub pi@${PI}
+
+push-code:  ## push code to the pi
+	rsync --archive \
+		  --verbose \
+		  --delete \
+		  --exclude .git \
+		  --exclude movies \
+		  . \
+		  pi@${PI}:${PROJECT}
+
+pull-photos:  ## rsync the photos off the pi
+# https://serverfault.com/a/98750
+	while ! rsync --archive \
+				  --verbose \
+				  --bwlimit=${BWLIMIT} \
+				  pi@lapsecam.local:photos/ /opt/stills/ ; do \
+				  	sleep 5 ; \
+				  done
+
+
+movie:  ## make a movie
+	bash /opt/${PROJECT}/scripts/make-movie.sh

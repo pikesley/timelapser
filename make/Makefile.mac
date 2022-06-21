@@ -1,0 +1,20 @@
+include make/Makefile.common
+
+build:  ## build the container (default)
+	docker build \
+		--build-arg PROJECT=${PROJECT} \
+		--tag ${ID} .
+
+run: guard-STILLS  ## run the container
+	docker run \
+		--name ${PROJECT} \
+		--hostname ${PROJECT} \
+		--volume $(shell pwd):/opt/${PROJECT} \
+		--volume ${STILLS}:/opt/stills \
+		--volume ${HOME}/.ssh:/root/.ssh \
+		--env PROJECT=${PROJECT} \
+		--interactive \
+		--tty \
+		--rm \
+		${ID} \
+		bash

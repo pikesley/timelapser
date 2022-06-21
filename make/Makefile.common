@@ -1,0 +1,12 @@
+ME = $(shell git config --global user.name)
+ifeq ($(ME),)  # this will resolve to empty-string in CI
+	ME := fakeperson
+endif
+
+PROJECT = $(shell basename $(shell pwd))
+
+ID = ${ME}/${PROJECT}
+
+PI = lapsecam.local
+BWLIMIT ?= 1000
+PHOTOS_DIR = /home/pi/photos

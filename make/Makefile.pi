@@ -1,0 +1,45 @@
+include make/Makefile.common
+
+setup: install make-photo-dir aim  ## install dependencies and aim the camera (default)
+
+install: apt-installs python-installs  ## install the dependencies
+
+apt-installs:
+	sudo apt-get update
+	sudo apt-get install \
+		--no-install-recommends \
+		--yes \
+		python3-pip \
+		git
+
+python-installs:
+	python -m pip install -r requirements-pi.txt
+
+make-photo-dir:
+	mkdir -p ${PHOTOS_DIR}/
+
+cron:  ## setup the cronjobs
+	sudo python scripts/build_cron.py
+	@cat /etc/cron.d/timelapser
+
+pause:  ## pause photography
+	sudo rm -f /etc/cron.d/${PROJECT}
+
+unpause: cron  ## restart photography
+
+aim:  ## stream video from the camera
+	@curl https://raw.githubusercontent.com/RuiSantosdotme/Random-Nerd-Tutorials/master/Projects/rpi_camera_surveillance_system.py -o /tmp/aimcam.py
+	@echo
+	@echo "Go to"
+	@echo
+	@echo "    http://$(shell hostname).local:8000"
+	@echo
+	@echo "to aim your camera (ctrl-C to stop)"
+	@echo
+	@python /tmp/aimcam.py
+
+delete:  ## delete all the photos
+	rm -fr ${PHOTOS_DIR}/*
+
+watch:  ## watch the photos directory
+	watch "ls -1 ${PHOTOS_DIR}/ | tail -10 && echo && du -sh ${PHOTOS_DIR}/"
