@@ -29,7 +29,7 @@ clean:  ## clean out cache cruft
 freeze:  ## freeze the pip versions
 	python -m pip freeze > requirements.txt
 
-send-key: docker-only
+send-key:  ## send ssh key to the pi
 	ssh-copy-id -i /root/.ssh/id_rsa.pub pi@${PI}
 
 push-code:  ## push code to the pi
