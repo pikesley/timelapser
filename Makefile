@@ -1,8 +1,3 @@
-IS_MAC := $(shell uname -a | grep 'Darwin')
-ifneq ($(IS_MAC),)
-	include make/Makefile.mac
-endif
-
 IS_DOCKER := $(shell uname -a | grep '64 GNU/Linux')
 ifneq ($(IS_DOCKER),)
 	include make/Makefile.docker
@@ -13,19 +8,9 @@ ifneq ($(IS_PI),)
 	include make/Makefile.pi
 endif
 
-build:  ## build the container
-	docker build \
-		--build-arg PROJECT=${PROJECT} \
-		--tag ${ID} .
-
-ci: build
-	docker run \
-		--name ${PROJECT} \
-		--hostname ${PROJECT} \
-		--env PROJECT=${PROJECT} \
-		--rm \
-		${ID} \
-		test
+ifeq "$(or $(IS_PI), $(IS_DOCKER))" ""
+	include make/Makefile.mac
+endif
 
 guard-%:
 	@if [ -z "${${*}}" ] ; \

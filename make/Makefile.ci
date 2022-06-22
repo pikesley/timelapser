@@ -1,0 +1,10 @@
+include make/Makefile.mac
+
+ci: build
+	docker run \
+		--name ${PROJECT} \
+		--hostname ${PROJECT} \
+		--env PROJECT=${PROJECT} \
+		--rm \
+		${ID} \
+		test
