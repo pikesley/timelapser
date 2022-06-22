@@ -2,7 +2,7 @@ FROM python:3.9
 
 ARG PROJECT
 
-RUN apt-get update && apt-get install -y ffmpeg rsync
+RUN apt-get update && apt-get install -y ffmpeg rsync vim screen
 WORKDIR /opt/${PROJECT}
 COPY ./ /opt/${PROJECT}
 RUN python -m pip install -r requirements.txt

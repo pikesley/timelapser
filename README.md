@@ -146,4 +146,4 @@ To incrementally pull the pictures as they're created, try something like
 while [ 1 ] ; do make pull-photos ; sleep 2 ; done
 ```
 
-This will (in theory) eventually catch up.
+This will (in theory) eventually catch up. You might want to consider running this inside a `screen` session, too.
