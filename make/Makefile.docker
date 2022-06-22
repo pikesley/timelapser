@@ -5,16 +5,16 @@ all: format lint test clean freeze  ## `format`, `lint`, `test`, `clean`, `freez
 format: black isort  ## run the formatters
 
 black:
-	python -m black .
+	@python -m black .
 
 isort:
-	python -m isort .
+	@python -m isort .
 
 lint:  ## run the linters
-	python -m pylama
+	@python -m pylama
 
 test:  ## run the tests
-	PYTHONDONTWRITEBYTECODE=1 \
+	@PYTHONDONTWRITEBYTECODE=1 \
 		python -m pytest \
 		--random-order \
 		--verbose \
@@ -27,13 +27,13 @@ clean:  ## clean out cache cruft
 	@rm -fr $$(find . -name .pytest_cache)
 
 freeze:  ## freeze the pip versions
-	python -m pip freeze > requirements.txt
+	@python -m pip freeze > requirements.txt
 
 send-key:  ## send ssh key to the pi
-	ssh-copy-id -i /root/.ssh/id_rsa.pub pi@${PI}
+	@ssh-copy-id -i /root/.ssh/id_rsa.pub pi@${PI}
 
 push-code:  ## push code to the pi
-	rsync --archive \
+	@rsync --archive \
 		  --verbose \
 		  --delete \
 		  --exclude .git \
@@ -43,7 +43,7 @@ push-code:  ## push code to the pi
 
 pull-photos:  ## rsync the photos off the pi
 # https://serverfault.com/a/98750
-	while ! rsync --archive \
+	@while ! rsync --archive \
 				  --verbose \
 				  --bwlimit=${BWLIMIT} \
 				  pi@lapsecam.local:photos/ /opt/stills/ ; do \
@@ -52,4 +52,4 @@ pull-photos:  ## rsync the photos off the pi
 
 
 movie:  ## make a movie
-	bash /opt/${PROJECT}/scripts/make-movie.sh
+	@bash /opt/${PROJECT}/scripts/make-movie.sh

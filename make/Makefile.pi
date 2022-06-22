@@ -5,25 +5,25 @@ setup: install make-photo-dir aim  ## install dependencies and aim the camera (d
 install: apt-installs python-installs  ## install the dependencies
 
 apt-installs:
-	sudo apt-get update
-	sudo apt-get install \
+	@sudo apt-get update
+	@sudo apt-get install \
 		--no-install-recommends \
 		--yes \
 		python3-pip \
 		git
 
 python-installs:
-	python -m pip install -r requirements-pi.txt
+	@python -m pip install -r requirements-pi.txt
 
 make-photo-dir:
-	mkdir -p ${PHOTOS_DIR}/
+	@mkdir -p ${PHOTOS_DIR}/
 
 cron:  ## setup the cronjobs
-	sudo python scripts/build_cron.py
+	@sudo python scripts/build_cron.py
 	@cat /etc/cron.d/timelapser
 
 pause:  ## pause photography
-	sudo rm -f /etc/cron.d/${PROJECT}
+	@sudo rm -f /etc/cron.d/${PROJECT}
 
 unpause: cron  ## restart photography
 
@@ -39,7 +39,7 @@ aim:  ## stream video from the camera
 	@python /tmp/aimcam.py
 
 delete:  ## delete all the photos
-	rm -fr ${PHOTOS_DIR}/*
+	@rm -fr ${PHOTOS_DIR}/*
 
 watch:  ## watch the photos directory
-	watch "ls -1 ${PHOTOS_DIR}/ | tail -10 && echo && du -sh ${PHOTOS_DIR}/"
+	@watch "ls -1 ${PHOTOS_DIR}/ | tail -10 && echo && du -sh ${PHOTOS_DIR}/"
