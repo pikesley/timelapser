@@ -1,6 +1,4 @@
-# Time-lapser
-
-[![CI](https://github.com/pikesley/timelapser/actions/workflows/main.yml/badge.svg)](https://github.com/pikesley/timelapser/actions/workflows/main.yml)
+[![CI](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml)
 
 _Make timelapse movies with a camera-equipped Raspberry Pi_
 
