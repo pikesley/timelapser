@@ -1,4 +1,4 @@
-FRAMES_PER_SECOND=25
+FRAMES_PER_SECOND=${1}
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
 mkdir -p /opt/${PROJECT}/movies/

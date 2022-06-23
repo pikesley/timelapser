@@ -52,4 +52,4 @@ pull-photos:  ## rsync the photos off the pi
 
 
 movie:  ## make a movie
-	@bash /opt/${PROJECT}/scripts/make-movie.sh
+	@bash /opt/${PROJECT}/scripts/make-movie.sh ${FRAMES_PER_SECOND}

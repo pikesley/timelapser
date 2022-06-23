@@ -10,3 +10,4 @@ ID = ${ME}/${PROJECT}
 PI = lapsecam.local
 BWLIMIT ?= 1000
 PHOTOS_DIR = /home/pi/photos
+FRAMES_PER_SECOND := 25

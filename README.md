@@ -125,14 +125,12 @@ BWLIMIT=0 make pull-photos
 Once you have all the photos locally, you can make them into a movie:
 
 ```
-make movie
+make movie FRAMES_PER_SECOND=25
 ```
 
 This runs [`ffmpeg`](https://ffmpeg.org/) over the images in `/opt/stills` and dumps a movie at `movies/movie-<timestamp>.mp4`, using these magic spells:
 
 ```
-FRAMES_PER_SECOND=25
-
 -c:v libx264 -vf fps=fps=${FRAMES_PER_SECOND} -pix_fmt yuv420p
 ```
 
