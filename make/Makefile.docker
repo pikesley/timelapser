@@ -5,10 +5,10 @@ all: format lint test clean freeze  ## `format`, `lint`, `test`, `clean`, `freez
 format: black isort  ## run the formatters
 
 black:
-	@python -m black .
+	@python -m black --quiet .
 
 isort:
-	@python -m isort .
+	@python -m isort --quiet .
 
 lint:  ## run the linters
 	@python -m pylama
@@ -18,8 +18,9 @@ test:  ## run the tests
 		python -m pytest \
 		--random-order \
 		--verbose \
+		--no-header \
+		--no-summary \
 		--capture no \
-		--failed-first \
 		--exitfirst
 
 clean:  ## clean out cache cruft
