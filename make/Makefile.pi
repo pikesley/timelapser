@@ -20,7 +20,7 @@ make-photo-dir:
 
 cron:  ## setup the cronjobs
 	@sudo python scripts/build_cron.py
-	@cat /etc/cron.d/timelapser
+	@cat /etc/cron.d/${PROJECT}
 
 pause:  ## pause photography
 	@sudo rm -f /etc/cron.d/${PROJECT}
