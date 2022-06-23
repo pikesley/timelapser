@@ -114,7 +114,7 @@ On the container:
 make pull-photos
 ```
 
-This pulls the photos from the Pi into `/opt/stills` (where `${STILLS}` is mounted). The `rsync` is running with bandwidth-limiting enabled, because letting it run full-tilt seems to overwhelm the Pi, which overheats and shuts down. The amount of limiting is configurable as `BWLIMIT` (in KB/second), so for example to run it unlimited, do
+This pulls the photos from the Pi into `/opt/stills` (where `${STILLS}` is mounted). The `rsync` is running with bandwidth-limiting enabled, because letting it run full-tilt while it's also taking photos seems to overwhelm the Pi, which overheats and shuts down. The amount of limiting is configurable as `BWLIMIT` (in KB/second), so for example to run it unlimited, do
 
 ```
 BWLIMIT=0 make pull-photos
@@ -145,3 +145,7 @@ while [ 1 ] ; do make pull-photos ; sleep 2 ; done
 ```
 
 This will (in theory) eventually catch up. You might want to consider running this inside a `screen` session, too.
+
+## Storage considerations
+
+A full 24 hours of 6-photos-per-minute, in the middle of June (so the minimum amount of all-black photos), runs to about 31GB.
