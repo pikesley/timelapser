@@ -8,20 +8,13 @@ black:
 	@python -m black --quiet .
 
 isort:
-	@python -m isort --quiet .
+	@python -m isort .
 
 lint:  ## run the linters
 	@python -m pylama
 
 test:  ## run the tests
-	@PYTHONDONTWRITEBYTECODE=1 \
-		python -m pytest \
-		--random-order \
-		--verbose \
-		--no-header \
-		--no-summary \
-		--capture no \
-		--exitfirst
+	@PYTHONDONTWRITEBYTECODE=1 python -m pytest
 
 clean:  ## clean out cache cruft
 	@rm -fr $$(find . -name __pycache__)
