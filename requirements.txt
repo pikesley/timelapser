@@ -13,7 +13,7 @@ pathspec==0.11.1
 platformdirs==3.10.0
 pluggy==1.0.0
 py==1.11.0
-pycodestyle==2.10.0
+pycodestyle==2.11.0
 pydocstyle==6.3.0
 pyflakes==2.4.0
 pylama==8.3.8
