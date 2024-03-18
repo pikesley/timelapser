@@ -1,6 +1,6 @@
 astroid==2.11.6
 attrs==23.2.0
-black==24.1.1
+black==24.3.0
 click==8.1.7
 dill==0.3.8
 iniconfig==2.0.0
